@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { motion } from 'framer-motion';
 
 // Initialize Stripe
@@ -19,11 +20,58 @@ interface TicketPageProps {
   };
 }
 
+// Checkout Form Component
+function CheckoutForm({ event, quantity }: { event: Event; quantity: number }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setProcessing(true);
+
+    const { error: submitError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/events/${event.title.toLowerCase().replace(/\s+/g, '-')}/success`,
+      },
+    });
+
+    if (submitError) {
+      setError(submitError.message ?? 'An error occurred');
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-6">
+      <PaymentElement />
+      {error && (
+        <div className="text-red-500 mt-4 text-sm">{error}</div>
+      )}
+      <button
+        type="submit"
+        disabled={!stripe || processing}
+        className="w-full bg-white text-black py-3 rounded-md font-semibold hover:bg-gray-200 transition disabled:opacity-50 mt-6"
+      >
+        {processing ? 'Processing...' : `Pay $${(event.price * quantity * 1.1).toFixed(2)}`}
+      </button>
+    </form>
+  );
+}
+
 const TicketPage = ({ params }: TicketPageProps) => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [event, setEvent] = useState<Event | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   useEffect(() => {
     // In a real application, fetch event details from your API
@@ -62,47 +110,31 @@ const TicketPage = ({ params }: TicketPageProps) => {
     fetchEvent();
   }, [params.slug]);
 
-  const handlePurchase = async () => {
-    if (!event) return;
+  useEffect(() => {
+    if (event) {
+      const createPaymentIntent = async () => {
+        try {
+          const response = await fetch('/api/create-payment-intent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              amount: Math.round(event.price * quantity * 1.1 * 100), // Convert to cents
+              eventTitle: event.title,
+            }),
+          });
 
-    try {
-      setLoading(true);
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          eventSlug: params.slug,
-          quantity,
-          eventTitle: event.title,
-          price: event.price,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-      
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({
-          sessionId,
-        });
-
-        if (error) {
-          throw error;
+          const data = await response.json();
+          setClientSecret(data.clientSecret);
+        } catch (err) {
+          setError('Error creating payment intent');
         }
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to process payment. Please try again.');
-    } finally {
-      setLoading(false);
+      };
+
+      createPaymentIntent();
     }
-  };
+  }, [event, quantity]);
 
   if (error) {
     return (
@@ -117,7 +149,7 @@ const TicketPage = ({ params }: TicketPageProps) => {
     );
   }
 
-  if (!event) {
+  if (!event || !clientSecret) {
     return (
       <div className="min-h-screen bg-black text-white py-20">
         <div className="container-custom">
@@ -128,6 +160,19 @@ const TicketPage = ({ params }: TicketPageProps) => {
       </div>
     );
   }
+
+  const appearance = {
+    theme: 'night',
+    variables: {
+      colorPrimary: '#ffffff',
+      colorBackground: '#111827',
+      colorText: '#ffffff',
+      colorDanger: '#ef4444',
+      fontFamily: 'system-ui, sans-serif',
+      spacingUnit: '4px',
+      borderRadius: '4px',
+    },
+  };
 
   return (
     <div className="min-h-screen bg-black text-white py-20">
@@ -182,13 +227,9 @@ const TicketPage = ({ params }: TicketPageProps) => {
               </div>
             </div>
 
-            <button
-              onClick={handlePurchase}
-              disabled={loading}
-              className="w-full bg-white text-black py-3 rounded-md font-semibold hover:bg-gray-200 transition disabled:opacity-50"
-            >
-              {loading ? 'Processing...' : 'Purchase Tickets'}
-            </button>
+            <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+              <CheckoutForm event={event} quantity={quantity} />
+            </Elements>
           </div>
 
           <div className="text-sm text-gray-400">
