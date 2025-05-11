@@ -70,6 +70,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About Section */}
+      <section className="py-20 bg-black text-white">
+        <div className="container-custom max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bebas font-bold mb-16 text-center">
+            <span className="text-white-600">ABOUT</span> THE BRAND
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+              <h3 className="text-2xl font-bebas font-bold mb-4">OUR STORY</h3>
+              <p className="text-gray-300">
+                Founded in 2022, our brand was born from the vibrant nightlife and fashion scene. We blend cutting-edge design with the energy of the party culture.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bebas font-bold mb-4">OUR VISION</h3>
+              <p className="text-gray-300">
+                We aim to create clothing that transcends typical fashion boundaries, creating pieces that express individuality while maintaining quality and sustainability.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bebas font-bold mb-4">OUR STYLE</h3>
+              <p className="text-gray-300">
+                Bold, experimental, and always forward-thinking. Our designs capture the essence of contemporary culture with a distinctive edge.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Upcoming Events Section */}
       <section className="py-20">
         <div className="container-custom">
