@@ -61,7 +61,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
       <div className="container-custom py-4 flex justify-between items-center">
         <motion.div 
           initial={{ opacity: 0 }}
@@ -69,11 +69,11 @@ const Navbar = () => {
           transition={{ duration: 0.5 }}
           className="z-50"
         >
-          <Link href="/" className="font-display text-3xl font-bold">
-            BRAND
+          <Link href="/" className="font-bebas text-3xl text-white">
+            1715
           </Link>
         </motion.div>
-
+        
         {/* Desktop Navigation */}
         <motion.nav 
           className="hidden md:block"
@@ -88,8 +88,18 @@ const Navbar = () => {
               </Link>
             </motion.li>
             <motion.li variants={itemVariants}>
-              <Link href="/shop" className="navbar-link">
-                Shop
+              <Link href="/events" className="navbar-link">
+                Events
+              </Link>
+            </motion.li>
+            <motion.li variants={itemVariants}>
+              <Link href="/merch" className="navbar-link">
+                Merch
+              </Link>
+            </motion.li>
+            <motion.li variants={itemVariants}>
+              <Link href="/about" className="navbar-link">
+                About
               </Link>
             </motion.li>
           </motion.ul>
@@ -103,9 +113,9 @@ const Navbar = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <span className={`w-full h-0.5 bg-current transform transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
-          <span className={`w-full h-0.5 bg-current transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-          <span className={`w-full h-0.5 bg-current transform transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
+          <span className={`w-full h-0.5 bg-white transform transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
+          <span className={`w-full h-0.5 bg-white transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
+          <span className={`w-full h-0.5 bg-white transform transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
         </motion.button>
 
         {/* Mobile Menu */}
@@ -132,8 +142,24 @@ const Navbar = () => {
                     variants={itemVariants}
                     onClick={() => setIsOpen(false)}
                   >
-                    <Link href="/shop" className="navbar-link">
-                      Shop
+                    <Link href="/events" className="navbar-link">
+                      Events
+                    </Link>
+                  </motion.li>
+                  <motion.li 
+                    variants={itemVariants}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Link href="/merch" className="navbar-link">
+                      Merch
+                    </Link>
+                  </motion.li>
+                  <motion.li 
+                    variants={itemVariants}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Link href="/about" className="navbar-link">
+                      About
                     </Link>
                   </motion.li>
                 </ul>

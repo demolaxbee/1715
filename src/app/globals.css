@@ -3,28 +3,59 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 248, 248, 248;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  overflow-x: hidden;
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+  font-family: var(--font-inter);
+}
+
+.font-bebas {
+  font-family: var(--font-bebas);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Transitions */
+.transition {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 @layer components {
@@ -33,27 +64,27 @@ body {
   }
   
   .btn-primary {
-    @apply inline-block bg-primary text-white py-3 px-8 font-bold text-lg transition-all duration-300 hover:bg-opacity-80;
+    @apply inline-block bg-white text-black py-3 px-8 font-bold text-lg transition-all duration-300 hover:bg-gray-200;
   }
   
   .heading-xl {
-    @apply font-display text-5xl md:text-7xl lg:text-8xl font-bold;
+    @apply font-bebas text-5xl md:text-7xl lg:text-8xl font-bold;
   }
   
   .heading-lg {
-    @apply font-display text-4xl md:text-5xl lg:text-6xl font-bold;
+    @apply font-bebas text-4xl md:text-5xl lg:text-6xl font-bold;
   }
   
   .heading-md {
-    @apply font-display text-3xl md:text-4xl font-bold;
+    @apply font-bebas text-3xl md:text-4xl font-bold;
   }
   
   .heading-sm {
-    @apply font-display text-2xl md:text-3xl font-bold;
+    @apply font-bebas text-2xl md:text-3xl font-bold;
   }
   
   .navbar-link {
-    @apply text-lg hover:text-primary transition-colors duration-300;
+    @apply text-white hover:text-gray-300 transition-colors duration-300;
   }
 
   .section-padding {
